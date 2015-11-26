@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map>
+	<room>
+		<name>Test</name>
+	</room>
+	<room>
+		<name>Test2</name>
+	</room>
+</map>
