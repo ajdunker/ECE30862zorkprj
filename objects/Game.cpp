@@ -68,7 +68,6 @@ void Game::startGame() {
 			cout << "Please input a non-blank command:" << endl;
 			continue;
 		}
-		cout << "\nCommand taken: " << input << endl;
 		doCommand(input);
 		input = "";
 	}
