@@ -39,7 +39,7 @@ public:
 
 private:
 	bool loadXML(string filename);
-	void splitXML(xml_node<> *, queue<xml_node<> *>&);
+	void splitXML(xml_node<> *, queue<xml_node<> *>&, queue<xml_node<> *>&);
 	void doCommand(string);
 	void moveRoom(string);
 

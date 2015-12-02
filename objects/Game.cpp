@@ -35,20 +35,24 @@ bool Game::loadXML(string filename) {
 	doc.parse<0>(&buffer[0]);
 	root_node = doc.first_node();
 	queue<xml_node<> *> rooms_xml;
+	queue<xml_node<> *> items_xml;
 	xml_node<> * node = root_node->first_node();
-	splitXML(node, rooms_xml);
+
+
+	splitXML(node, rooms_xml, items_xml);
 
 	//Add the rooms to the game
 	Room * newRoom;
 	while ((rooms_xml.size()) != 0) {
 		newRoom = new Room(rooms_xml.front());
+		//item stuff
 		rooms[newRoom->name] = newRoom;
 		rooms_xml.pop();
 	}
 	return true;
 }
-
-void Game::splitXML(xml_node<> * node, queue<xml_node<> *>& rooms_xml) {
+//unsure what is happening here
+void Game::splitXML(xml_node<> * node, queue<xml_node<> *>& rooms_xml, queue<xml_node<> *>& items_xml) {
 	while (node != NULL) {
 		if (string((node->name())) == string("room")) {
 			rooms_xml.push(node);

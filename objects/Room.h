@@ -10,6 +10,7 @@
 
 #include <string>
 #include <stdio.h>
+#include <Item.h>
 #include <iostream>
 #include <map>
 #include <vector>
@@ -29,10 +30,12 @@ public:
 	string type = "regular";
 	string description;
 	map<string, string> borders;
+	map<string, Item> items;
 
 private:
 	void createRoom(xml_node<> *);
 	void createBorder(xml_node<> *);
+	void createItem(xml_node<> *);
 };
 
 #endif /* Room_H_ */
