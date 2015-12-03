@@ -36,28 +36,51 @@ bool Game::loadXML(string filename) {
 	root_node = doc.first_node();
 	queue<xml_node<> *> rooms_xml;
 	queue<xml_node<> *> items_xml;
+	queue<xml_node<> *> triggers_xml;
+	queue<xml_node<> *> containers_xml;
+	queue<xml_node<> *> creatures_xml;
 	xml_node<> * node = root_node->first_node();
 
 
-	splitXML(node, rooms_xml, items_xml);
+	splitXML(node, rooms_xml, items_xml, triggers_xml, containers_xml, creatures_xml);
 
 	//Add the rooms to the game
+	Item * newItem;
 	Room * newRoom;
+	Trigger * newTrigger;
+
+	while ((items_xml.size()) != 0) {
+		newItem = new Item(items_xml.front());
+		items[newItem->name] = newItem;
+		items_xml.pop();
+	}
+	while ((triggers_xml.size()) != 0) {
+		newTrigger = new Trigger(triggers_xml.front());
+//		trigger[newTrigger->name] = newTrigger;
+		triggers_xml.pop();
+	}
+
 	while ((rooms_xml.size()) != 0) {
 		newRoom = new Room(rooms_xml.front());
-		//item stuff
 		rooms[newRoom->name] = newRoom;
 		rooms_xml.pop();
 	}
+
 	return true;
 }
-//unsure what is happening here
-void Game::splitXML(xml_node<> * node, queue<xml_node<> *>& rooms_xml, queue<xml_node<> *>& items_xml) {
+
+void Game::splitXML(xml_node<> * node, queue<xml_node<> *>& rooms_xml, queue<xml_node<> *>& items_xml, queue<xml_node<> *>& triggers_xml, queue<xml_node<> *>& containers_xml, queue<xml_node<> *>& creatures_xml) {
 	while (node != NULL) {
 		if (string((node->name())) == string("room")) {
 			rooms_xml.push(node);
 		}
-		node = node->next_sibling();
+		else if (string((node->name())) == string("item")) {
+			items_xml.push(node);
+		}
+		else if (string((node->name())) == string("trigger")){
+			triggers_xml.push(node);
+		}
+	node = node->next_sibling();
 	}
 }
 
@@ -72,6 +95,11 @@ void Game::startGame() {
 			cout << "Please input a non-blank command:" << endl;
 			continue;
 		}
+
+		//check triggers
+
+
+
 		doCommand(input);
 		input = "";
 	}
@@ -79,13 +107,39 @@ void Game::startGame() {
 
 void Game::doCommand(string input) {
 
+	  // construct a stream from the string
+	  stringstream strstr(input);
+
+	  // use stream iterators to copy the stream to the vector as whitespace separated strings
+	  istream_iterator<string> it(strstr);
+	  istream_iterator<string> end;
+	  vector<string> results(it, end);
+
+
 	if (input == "n" || input == "e" || input == "s" || input == "w") {
 		moveRoom(input);
 	} else if (input == "quit") {
 		exit(EXIT_SUCCESS);
+	} else if (input == "i") {
+		printInventory();
+	} else if (results[0] == "take") {
+		takeItem(results[1]);
+	} else if (results[0] == "open") {
+		//open container
+	} else if (results[0] == "read") {
+		//read writing on item
+	} else if (results[0] == "drop") {
+		//drop item fron inventory
+	} else if (results[0] == "put") {
+		//put item in container
+	} else if (results[0] == "turn") {
+		//turns on an item
+	} else if (results[0] == "attack") {
+		//attacks creature with item
 	} else {
 		cout << "Command not recognized." << endl;
 	}
+
 }
 
 void Game::moveRoom(string direction) {
@@ -110,4 +164,30 @@ void Game::moveRoom(string direction) {
 	} else {
 		cout << "Can't go that way." << endl;
 	}
+}
+void Game::takeItem(string new_item){
+	Room * curPtRoom = rooms.find(currentRoom)->second;
+	if (curPtRoom->items.count(new_item) > 0){
+		inventory[new_item] = new_item;
+		curPtRoom->items.erase(new_item);
+		cout << new_item << " has been added to your inventory"<<endl;
+	}
+	else{
+		cout <<"Cannot take "<< new_item << endl;
+	}
+}
+
+void Game::printInventory()
+{
+	if( inventory.empty() ){
+		cout<<"There is nothing in your inventory" << endl;
+	}
+	else {
+
+		for(map<string,string>::iterator cnt = inventory.begin(); cnt != inventory.end(); cnt++){
+			cout<<cnt->second<<", ";
+		}
+		cout <<endl;
+	}
+
 }

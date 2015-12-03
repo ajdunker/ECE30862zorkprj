@@ -18,6 +18,7 @@
 #include <map>
 #include <queue>
 #include "Room.h"
+#include "Item.h"
 #include "../rapidxml-1.13/rapidxml.hpp"
 
 using namespace std;
@@ -27,6 +28,8 @@ class Game {
 public:
 
 	map<string, Room*> rooms;
+	map<string, Item*> items;
+	map<string, string> inventory;
 
 	Game(string);
 	Game(Game&);
@@ -39,9 +42,11 @@ public:
 
 private:
 	bool loadXML(string filename);
-	void splitXML(xml_node<> *, queue<xml_node<> *>&, queue<xml_node<> *>&);
+	void splitXML(xml_node<> *, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&);
 	void doCommand(string);
 	void moveRoom(string);
+	void takeItem(string);
+	void printInventory();
 
 };
 
