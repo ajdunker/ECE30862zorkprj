@@ -48,12 +48,20 @@ bool Game::loadXML(string filename) {
 	Item * newItem;
 	Room * newRoom;
 	Trigger * newTrigger;
+	Container * newContainer;
 
 	while ((items_xml.size()) != 0) {
 		newItem = new Item(items_xml.front());
 		items[newItem->name] = newItem;
 		items_xml.pop();
 	}
+
+	while ((containers_xml.size()) != 0) {
+		newContainer = new Container(containers_xml.front());
+//		items[newItem->name] = newItem;
+		containers_xml.pop();
+	}
+
 	while ((triggers_xml.size()) != 0) {
 		newTrigger = new Trigger(triggers_xml.front());
 		triggers[newTrigger->name] = newTrigger;
@@ -79,6 +87,9 @@ void Game::splitXML(xml_node<> * node, queue<xml_node<> *>& rooms_xml, queue<xml
 		}
 		else if (string((node->name())) == string("trigger")){
 			triggers_xml.push(node);
+		}
+		else if (string((node->name())) == string("container")){
+			containers_xml.push(node);
 		}
 	node = node->next_sibling();
 	}
