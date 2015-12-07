@@ -131,18 +131,27 @@ void Game::doCommand(string input) {
 	} else if (results[0] == "open") {
 		//open container
 	} else if (results[0] == "read") {
-		//read writing on item
+		printInventory(results[1]);
 	} else if (results[0] == "drop") {
-		//drop item fron inventory
+		dropInventory(results[1]);
 	} else if (results[0] == "put") {
 		//put item in container
 	} else if (results[0] == "turn") {
 		//turns on an item
 	} else if (results[0] == "attack") {
 		//attacks creature with item
-	} else {
+	} else if (results[0] == "add") {
+		//addObject(results[1], results[3]);
+		cout<<results[1]<<results[3]<<endl;
+	}  else if (results[0] == "delete") {
+		//attacks creature with item
+	}  else {
 		cout << "Command not recognized." << endl;
 	}
+
+}
+
+void Game::addObject(string object, string place){
 
 }
 
@@ -181,8 +190,7 @@ void Game::takeItem(string new_item){
 	}
 }
 
-void Game::printInventory()
-{
+void Game::printInventory(){
 	if( inventory.empty() ){
 		cout<<"There is nothing in your inventory" << endl;
 	}
@@ -194,4 +202,33 @@ void Game::printInventory()
 		cout <<endl;
 	}
 
+}
+
+void Game::printInventory(string searchItem){
+
+	bool found = false;
+	for(map<string,string>::iterator cnt = inventory.begin(); cnt != inventory.end(); cnt++){
+		if (cnt->second == searchItem){
+			cout<<items[searchItem]->writing;//need to find out how to display writing
+			found = true;
+		}
+	}
+	if (found == false){
+		cout<<searchItem<<" is not in your inventory";
+	}
+	cout <<endl;
+
+}
+
+void Game::dropInventory(string searchItem){
+	if (inventory.count(searchItem) > 0){
+		inventory.erase(searchItem);
+		Room * curPtRoom = rooms.find(currentRoom)->second;
+		curPtRoom->items[searchItem] = searchItem;
+		cout<<searchItem<<" has been dropped";
+	}
+	else{
+		cout<<searchItem<<" is not in your inventory";
+	}
+	cout<<endl;
 }

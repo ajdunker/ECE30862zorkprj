@@ -19,9 +19,6 @@ Item::~Item() {
 void Item::createItem(xml_node<> * itemNode) {
 	string xmlName;
 	string xmlValue;
-	string name;
-	string writing;
-	string status;
 	Trigger* newTrigger;
 	xml_node<> * childNode = itemNode->first_node();
 
@@ -41,7 +38,5 @@ void Item::createItem(xml_node<> * itemNode) {
 		}
 		childNode = childNode->next_sibling();
 	}
-	//add to the map
-	//this->items[writing] = name;
 }
 

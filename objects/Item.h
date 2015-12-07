@@ -28,6 +28,8 @@ public:
 
 	string name;
 	string description;
+	string writing;
+	string status;
 	map<string, Trigger*> triggers;
 
 private:

@@ -20,6 +20,7 @@
 #include "Room.h"
 #include "Item.h"
 #include "Trigger.h"
+#include "Container.h"
 #include "../rapidxml-1.13/rapidxml.hpp"
 
 using namespace std;
@@ -48,6 +49,9 @@ private:
 	void moveRoom(string);
 	void takeItem(string);
 	void printInventory();
+	void printInventory(string);
+	void dropInventory(string);
+	void addObject(string,string);
 
 };
 
