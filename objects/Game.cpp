@@ -42,12 +42,11 @@ bool Game::loadXML(string filename) {
 	xml_node<> * node = root_node->first_node();
 
 
-	splitXML(node, rooms_xml, items_xml, triggers_xml, containers_xml, creatures_xml);
+	splitXML(node, rooms_xml, items_xml, containers_xml, creatures_xml);
 
 	//Add the rooms to the game
 	Item * newItem;
 	Room * newRoom;
-	Trigger * newTrigger;
 	Container * newContainer;
 
 	while ((items_xml.size()) != 0) {
@@ -62,12 +61,6 @@ bool Game::loadXML(string filename) {
 		containers_xml.pop();
 	}
 
-	while ((triggers_xml.size()) != 0) {
-		newTrigger = new Trigger(triggers_xml.front());
-		triggers[newTrigger->name] = newTrigger;
-		triggers_xml.pop();
-	}
-
 	while ((rooms_xml.size()) != 0) {
 		newRoom = new Room(rooms_xml.front());
 		rooms[newRoom->name] = newRoom;
@@ -77,16 +70,13 @@ bool Game::loadXML(string filename) {
 	return true;
 }
 
-void Game::splitXML(xml_node<> * node, queue<xml_node<> *>& rooms_xml, queue<xml_node<> *>& items_xml, queue<xml_node<> *>& triggers_xml, queue<xml_node<> *>& containers_xml, queue<xml_node<> *>& creatures_xml) {
+void Game::splitXML(xml_node<> * node, queue<xml_node<> *>& rooms_xml, queue<xml_node<> *>& items_xml, queue<xml_node<> *>& containers_xml, queue<xml_node<> *>& creatures_xml) {
 	while (node != NULL) {
 		if (string((node->name())) == string("room")) {
 			rooms_xml.push(node);
 		}
 		else if (string((node->name())) == string("item")) {
 			items_xml.push(node);
-		}
-		else if (string((node->name())) == string("trigger")){
-			triggers_xml.push(node);
 		}
 		else if (string((node->name())) == string("container")){
 			containers_xml.push(node);
@@ -112,6 +102,9 @@ void Game::startGame() {
 
 
 		doCommand(input);
+
+		//check triggers
+
 		input = "";
 	}
 }

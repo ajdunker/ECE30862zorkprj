@@ -13,6 +13,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include "trigger.h"
 #include "../rapidxml-1.13/rapidxml.hpp"
 
 using namespace std;
@@ -25,6 +26,9 @@ public:
 
 	map<string, string> items;
 	string name;
+	string status;
+	string accept;
+	map<string, Trigger*> triggers;
 
 private:
 	void createContainer(xml_node<> *);

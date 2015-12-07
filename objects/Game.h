@@ -31,7 +31,6 @@ public:
 	map<string, Room*> rooms;
 	map<string, Item*> items;
 	map<string, string> inventory;
-	map<string, Trigger*> triggers;
 
 	Game(string);
 	Game(Game&);
@@ -44,7 +43,7 @@ public:
 
 private:
 	bool loadXML(string filename);
-	void splitXML(xml_node<> *, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&);
+	void splitXML(xml_node<> *, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&);
 	void doCommand(string);
 	void moveRoom(string);
 	void takeItem(string);

@@ -10,6 +10,7 @@
 
 #include <string>
 #include <stdio.h>
+#include "trigger.h"
 #include <iostream>
 #include <map>
 #include <vector>
@@ -30,6 +31,7 @@ public:
 	string description;
 	map<string, string> borders;
 	map<string, string> items;
+	map<string, Trigger*> triggers;
 
 private:
 	void createRoom(xml_node<> *);

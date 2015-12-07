@@ -18,6 +18,7 @@ Room::~Room() {
 void Room::createRoom(xml_node<> * childNode) {
 	string xmlName;
 	string xmlValue;
+	Trigger* newTrigger;
 
 	while (childNode != NULL) {
 		xmlName = childNode->name();
@@ -33,6 +34,9 @@ void Room::createRoom(xml_node<> * childNode) {
 			createBorder(childNode);
 		} else if (xmlName == "item") {
 			this->items[xmlValue] = xmlValue;
+		} else if (xmlName == "trigger"){
+			newTrigger = new Trigger(childNode);
+			triggers[newTrigger->name] = newTrigger;
 		}
 
 		childNode = childNode->next_sibling();

@@ -22,20 +22,22 @@ void Item::createItem(xml_node<> * itemNode) {
 	string name;
 	string writing;
 	string status;
+	Trigger* newTrigger;
 	xml_node<> * childNode = itemNode->first_node();
 
 	while (childNode != NULL) {
 		xmlName = childNode->name();
 		xmlValue = childNode->value();
 
-		if (xmlName == "Name") {
+		if (xmlName == "name") {
 			name = xmlValue;
-
-		} else if (xmlName == "Writing") {
+		} else if (xmlName == "writing") {
 			writing = xmlValue;
-		}
-		else if (xmlName == "Status") {
+		} else if (xmlName == "status") {
 			status = xmlValue;
+		} else if (xmlName == "trigger"){
+			newTrigger = new Trigger(childNode);
+			triggers[newTrigger->name] = newTrigger;
 		}
 		childNode = childNode->next_sibling();
 	}

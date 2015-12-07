@@ -13,6 +13,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include "trigger.h"
 #include "../rapidxml-1.13/rapidxml.hpp"
 
 using namespace std;
@@ -27,6 +28,7 @@ public:
 
 	string name;
 	string description;
+	map<string, Trigger*> triggers;
 
 private:
 	void createItem(xml_node<> *);
