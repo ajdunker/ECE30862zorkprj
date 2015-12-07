@@ -19,6 +19,7 @@
 #include <queue>
 #include "Room.h"
 #include "Item.h"
+#include "Trigger.h"
 #include "../rapidxml-1.13/rapidxml.hpp"
 
 using namespace std;
@@ -30,6 +31,7 @@ public:
 	map<string, Room*> rooms;
 	map<string, Item*> items;
 	map<string, string> inventory;
+	map<string, Trigger*> triggers;
 
 	Game(string);
 	Game(Game&);

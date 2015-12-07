@@ -56,7 +56,7 @@ bool Game::loadXML(string filename) {
 	}
 	while ((triggers_xml.size()) != 0) {
 		newTrigger = new Trigger(triggers_xml.front());
-//		trigger[newTrigger->name] = newTrigger;
+		triggers[newTrigger->name] = newTrigger;
 		triggers_xml.pop();
 	}
 

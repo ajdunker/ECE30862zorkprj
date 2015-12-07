@@ -28,8 +28,14 @@ public:
 	string status;
 	string owner;
 	string name;//set equal to the object
-	Trigger();
+	map<string, string> conditions;
+	Trigger(xml_node<> *);
 	virtual ~Trigger();
+
+private:
+	void createTrigger(xml_node<> *);
+	void createCondition(xml_node<> *);
+
 };
 
 #endif /* TRIGGER_H_ */

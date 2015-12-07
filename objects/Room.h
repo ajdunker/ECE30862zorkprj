@@ -22,7 +22,7 @@ class Room {
 
 public:
 
-	Room(rapidxml::xml_node<> *);
+	Room(xml_node<> *);
 	virtual ~Room();
 
 	string name;
