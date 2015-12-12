@@ -57,7 +57,7 @@ bool Game::loadXML(string filename) {
 
 	while ((containers_xml.size()) != 0) {
 		newContainer = new Container(containers_xml.front());
-//		items[newItem->name] = newItem;
+		containers[newContainer->name] = newContainer;
 		containers_xml.pop();
 	}
 
@@ -123,19 +123,20 @@ void Game::doCommand(string input) {
 	if (input == "n" || input == "e" || input == "s" || input == "w") {
 		moveRoom(input);
 	} else if (input == "quit") {
+		cout<<"quitting game"<<endl;
 		exit(EXIT_SUCCESS);
 	} else if (input == "i") {
 		printInventory();
 	} else if (results[0] == "take") {
 		takeItem(results[1]);
 	} else if (results[0] == "open") {
-		//open container
+		openContainer(results[1]);
 	} else if (results[0] == "read") {
 		printInventory(results[1]);
 	} else if (results[0] == "drop") {
 		dropInventory(results[1]);
 	} else if (results[0] == "put") {
-		//put item in container
+		putItem(results[1], results[3]);
 	} else if (results[0] == "turn") {
 		//turns on an item
 	} else if (results[0] == "attack") {
@@ -144,15 +145,87 @@ void Game::doCommand(string input) {
 		//addObject(results[1], results[3]);
 		cout<<results[1]<<results[3]<<endl;
 	}  else if (results[0] == "delete") {
-		//attacks creature with item
+		deleteWidget(results[1]);
+	}  else if (results[0] == "Update") {
+		//deletes item from the game
+	}  else if (results[0] == "Game" && results[1] == "Over") {
+		cout<<"Victory!!"<<endl;
+		exit(EXIT_SUCCESS);
 	}  else {
 		cout << "Command not recognized." << endl;
 	}
 
 }
 
-void Game::addObject(string object, string place){
+void Game::deleteWidget(string itemName){
+	bool found = false;
 
+	for(map<string,Room*>::iterator cnt = rooms.begin(); cnt != rooms.end(); cnt++){
+		if (cnt->first == itemName){
+			//delete room
+			found = true;
+		}
+	}
+
+	if (found == false){
+		for(map<string,Item*>::iterator cnt = items.begin(); cnt != items.end(); cnt++){
+			if (cnt->first == itemName){
+				//delete item
+				found = true;
+			}
+		}
+	}
+	if (found == false){
+		for(map<string,Container*>::iterator cnt = containers.begin(); cnt != containers.end(); cnt++){
+			if (cnt->first == itemName){
+				//delete container
+				found = true;
+			}
+		}
+	}
+
+	if (found == true){
+		cout<<itemName<<" has been deleted"<<endl;
+	}
+	else{
+		cout<<"Cannot delete requested item"<<endl;
+	}
+
+	return;
+}
+
+void Game::openContainer(string input){
+
+	Container * currentContainer = containers.find(input)->second;
+
+	cout<<"test"<<endl;
+	cout<<currentContainer->name;
+
+}
+
+void Game::putItem(string itemName, string containerName){
+	Room * curPtRoom = rooms.find(currentRoom)->second;
+	if (inventory.count(itemName) > 0){
+		if (curPtRoom->containers.count(containerName) > 0){
+			Container * curContainer = containers.find(containerName)->second;
+			//it is a legal operation
+			//curContainer->items[itemName] = inventory[itemName];//need to verify this line
+//			cout<<curContainer->items<<endl;
+			inventory.erase(itemName);
+
+			cout<<itemName<<" has been put into "<<containerName<<endl;
+		}
+		else{
+			cout<<"Cannot perform action, container does not exist in current room"<<endl;
+		}
+	}
+	else{
+		cout<<itemName<<"Cannot perform action, item is not in your inventory"<<endl;
+	}
+}
+
+void Game::addObject(string object, string place){
+	Room * curPtRoom = rooms.find(currentRoom)->second;
 }
 
 void Game::moveRoom(string direction) {
@@ -178,6 +251,7 @@ void Game::moveRoom(string direction) {
 		cout << "Can't go that way." << endl;
 	}
 }
+
 void Game::takeItem(string new_item){
 	Room * curPtRoom = rooms.find(currentRoom)->second;
 	if (curPtRoom->items.count(new_item) > 0){
@@ -221,10 +295,12 @@ void Game::printInventory(string searchItem){
 }
 
 void Game::dropInventory(string searchItem){
+
+	Room * curPtRoom = rooms.find(currentRoom)->second;
+
 	if (inventory.count(searchItem) > 0){
+		curPtRoom->items[searchItem] = inventory[searchItem];
 		inventory.erase(searchItem);
-		Room * curPtRoom = rooms.find(currentRoom)->second;
-		curPtRoom->items[searchItem] = searchItem;
 		cout<<searchItem<<" has been dropped";
 	}
 	else{

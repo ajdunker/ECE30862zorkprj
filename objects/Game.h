@@ -32,6 +32,7 @@ public:
 	map<string, Room*> rooms;
 	map<string, Item*> items;
 	map<string, string> inventory;
+	map<string, Container*> containers;
 
 	Game(string);
 	Game(Game&);
@@ -52,6 +53,10 @@ private:
 	void printInventory(string);
 	void dropInventory(string);
 	void addObject(string,string);
+	void openContainer(string);
+	void deleteWidget(string);
+	void creatItem(string, string);
+	void putItem(string, string);
 
 };
 

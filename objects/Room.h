@@ -31,6 +31,7 @@ public:
 	string description;
 	map<string, string> borders;
 	map<string, string> items;
+	map<string, string> containers;
 	map<string, Trigger*> triggers;
 
 private:
