@@ -55,7 +55,7 @@ private:
 	void addObject(string,string);
 	void openContainer(string);
 	void deleteWidget(string);
-	void creatItem(string, string);
+	void addWidget(string, string);
 	void putItem(string, string);
 
 };

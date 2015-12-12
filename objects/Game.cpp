@@ -142,27 +142,89 @@ void Game::doCommand(string input) {
 	} else if (results[0] == "attack") {
 		//attacks creature with item
 	} else if (results[0] == "add") {
-		//addObject(results[1], results[3]);
-		cout<<results[1]<<results[3]<<endl;
-	}  else if (results[0] == "delete") {
+		addWidget(results[1], results[3]);
+	} else if (results[0] == "delete") {
 		deleteWidget(results[1]);
-	}  else if (results[0] == "Update") {
+	} else if (results[0] == "Update") {
 		//deletes item from the game
-	}  else if (results[0] == "Game" && results[1] == "Over") {
+	} else if (results[0] == "Game" && results[1] == "Over") {
 		cout<<"Victory!!"<<endl;
 		exit(EXIT_SUCCESS);
-	}  else {
+	} else {
 		cout << "Command not recognized." << endl;
+	}
+
+}
+
+void Game::addWidget(string itemName, string location){
+
+	Room * curPtRoom;
+	string itemType;
+	string locationType = "Room";
+
+	for(map<string,Item*>::iterator cnt = items.begin(); cnt != items.end(); cnt++){
+		if (cnt->first == itemName){
+			itemType = "item";
+		}
+		if (cnt->first == location){
+			itemType = "item";
+		}
+	}
+	for(map<string,Container*>::iterator cnt = containers.begin(); cnt != containers.end(); cnt++){
+		if (cnt->first == itemName){
+			itemType = "container";
+		}
+		if (cnt->first == location){
+			locationType = "container";
+		}
+	}
+
+	for(map<string,Room*>::iterator cnt = rooms.begin(); cnt != rooms.end(); cnt++){
+		if (cnt->first == itemName){
+			itemType = "room";
+		}
+		if (cnt->first == location){
+			locationType = "room";
+		}
+	}
+
+
+	if (itemType == "item"){
+		if(locationType == "container"){
+			//to do
+		}
+		else if(locationType == "room"){
+			curPtRoom = rooms.find(location)->second;
+			curPtRoom->items[itemName] = itemName;
+			cout<<itemName<<" has been added to "<<location<<endl;
+		}
+		else{
+			cout<<"Error, location does not exist in XML"<<endl;
+		}
+	}
+	else if (itemType == "container"){
+		if (locationType == "room"){
+			curPtRoom = rooms.find(location)->second;
+			curPtRoom->containers[itemName] = itemName;
+			cout<<itemName<<" has been added to "<<location<<endl;
+		}
+		else{
+			cout<<"Error, containers can only be added to rooms"<<endl;
+		}
+	}
+	else{
+		cout<<"Error, object does not exist"<<endl;
 	}
 
 }
 
 void Game::deleteWidget(string itemName){
 	bool found = false;
+	Room * curPtRoom;
 
 	for(map<string,Room*>::iterator cnt = rooms.begin(); cnt != rooms.end(); cnt++){
 		if (cnt->first == itemName){
-			//delete room
+			rooms.erase(itemName);
 			found = true;
 		}
 	}
@@ -170,7 +232,10 @@ void Game::deleteWidget(string itemName){
 	if (found == false){
 		for(map<string,Item*>::iterator cnt = items.begin(); cnt != items.end(); cnt++){
 			if (cnt->first == itemName){
-				//delete item
+				for(map<string,Room*>::iterator cnt2 = rooms.begin(); cnt2 != rooms.end(); cnt2++){
+					curPtRoom = rooms.find(cnt2->first)->second;
+					curPtRoom->items.erase(itemName);
+				}
 				found = true;
 			}
 		}
@@ -178,7 +243,10 @@ void Game::deleteWidget(string itemName){
 	if (found == false){
 		for(map<string,Container*>::iterator cnt = containers.begin(); cnt != containers.end(); cnt++){
 			if (cnt->first == itemName){
-				//delete container
+				for(map<string,Room*>::iterator cnt2 = rooms.begin(); cnt2 != rooms.end(); cnt2++){
+					curPtRoom = rooms.find(cnt2->first)->second;
+					curPtRoom->containers.erase(itemName);
+				}
 				found = true;
 			}
 		}
@@ -196,10 +264,16 @@ void Game::deleteWidget(string itemName){
 
 void Game::openContainer(string input){
 
-	Container * currentContainer = containers.find(input)->second;
+	Room * curPtRoom = rooms.find(currentRoom)->second;
+//	Container * currentContainer = curPtRoom->containers.find(input)->second;
+
+
+	if (containers.count(input) > 0){
+		Container * currentContainer = containers.find(input)->second;
+		cout<<"found it ";
+	}
 
 	cout<<"test"<<endl;
-	cout<<currentContainer->name;
 
 }
 
