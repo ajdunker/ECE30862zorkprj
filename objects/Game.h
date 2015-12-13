@@ -57,7 +57,8 @@ private:
 	void deleteWidget(string);
 	void addWidget(string, string);
 	void putItem(string, string);
-
+	bool checkTriggers(string);
+	bool checkConditions(map<string, string>);
 };
 
 #endif /* OBJECTS_Game_H_ */

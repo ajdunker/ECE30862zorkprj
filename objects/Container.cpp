@@ -15,16 +15,16 @@ Container::~Container() {
 	// TODO Auto-generated destructor stub
 }
 
-void Container::createContainer(xml_node<> * containerNode){
+void Container::createContainer(xml_node<> * childNode){
 
 	string xmlName;
 	string xmlValue;
 	Trigger* newTrigger;
-	xmlName = containerNode->name();
-	xmlValue = containerNode->value();
-	xml_node<> * childNode = containerNode->first_node();
 
 	while (childNode != NULL) {
+		xmlName = childNode->name();
+		xmlValue = childNode->value();
+
 		if (xmlName == "name") {
 			name = xmlValue;
 		} else if (xmlName == "item") {

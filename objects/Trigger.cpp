@@ -9,7 +9,7 @@
 
 Trigger::Trigger(xml_node<> * trigger) {
 	// TODO Auto-generated constructor stub
-
+	createTrigger(trigger->first_node());
 }
 
 Trigger::~Trigger() {
@@ -28,7 +28,6 @@ void Trigger::createTrigger(xml_node<> * childNode) {
 		else if (Name == "command") { this->command = Value; }
 		else if (Name == "print") { this->print = Value; }
 		else if (Name == "condition") { createCondition(childNode); }
-
 
 		childNode = childNode->next_sibling();
 

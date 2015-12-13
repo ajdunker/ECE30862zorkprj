@@ -20,6 +20,18 @@ Game::~Game() {
 	// TODO Auto-generated destructor stub
 }
 
+template <typename K, typename V>
+std::ostream& operator<<(std::ostream& os, const std::map<K, V>& m)
+{
+    os << "{ ";
+    for (typename std::map<K, V>::const_iterator i = m.begin(); i != m.end(); ++i)
+    {
+        if (i != m.begin()) os << ", ";
+        os << i->first << ": " << i->second;
+    }
+    return os << " }";
+}
+
 bool Game::loadXML(string filename) {
 	xml_document<> doc;
 	xml_node<> * root_node;
@@ -87,6 +99,7 @@ void Game::splitXML(xml_node<> * node, queue<xml_node<> *>& rooms_xml, queue<xml
 
 void Game::startGame() {
 	//Always start at entrance
+	bool rtn;
 	currentRoom = "Entrance";
 	cout << rooms.find(currentRoom)->second->description << endl;
 	while(true) {
@@ -97,14 +110,12 @@ void Game::startGame() {
 			continue;
 		}
 
-		//check triggers
-
-
-
-		doCommand(input);
-
-		//check triggers
-
+		rtn = checkTriggers(input);
+		if(rtn == false) {
+			doCommand(input);
+		}
+		checkTriggers("");
+		rtn = false;
 		input = "";
 	}
 }
@@ -262,22 +273,20 @@ void Game::deleteWidget(string itemName){
 	return;
 }
 
-void Game::openContainer(string input){
+void Game::openContainer(string x) {
 
 	Room * curPtRoom = rooms.find(currentRoom)->second;
-//	Container * currentContainer = curPtRoom->containers.find(input)->second;
+	//Container * currentContainer = curPtRoom->containers.find(x)->second;
 
-
-	if (containers.count(input) > 0){
-		Container * currentContainer = containers.find(input)->second;
-		cout<<"found it ";
+	if (curPtRoom->containers.count(x) > 0){
+		cout << "found it " << endl;
 	}
-
-	cout<<"test"<<endl;
-
+	cout << "test" << endl;
+	cout << x << endl;
+	cout << "test2" << endl;
 }
 
-void Game::putItem(string itemName, string containerName){
+void Game::putItem(string itemName, string containerName) {
 	Room * curPtRoom = rooms.find(currentRoom)->second;
 	if (inventory.count(itemName) > 0){
 		if (curPtRoom->containers.count(containerName) > 0){
@@ -298,7 +307,7 @@ void Game::putItem(string itemName, string containerName){
 	}
 }
 
-void Game::addObject(string object, string place){
+void Game::addObject(string object, string place) {
 	Room * curPtRoom = rooms.find(currentRoom)->second;
 }
 
@@ -326,7 +335,7 @@ void Game::moveRoom(string direction) {
 	}
 }
 
-void Game::takeItem(string new_item){
+void Game::takeItem(string new_item) {
 	Room * curPtRoom = rooms.find(currentRoom)->second;
 	if (curPtRoom->items.count(new_item) > 0){
 		inventory[new_item] = new_item;
@@ -338,8 +347,8 @@ void Game::takeItem(string new_item){
 	}
 }
 
-void Game::printInventory(){
-	if( inventory.empty() ){
+void Game::printInventory() {
+	if( inventory.empty() ) {
 		cout<<"There is nothing in your inventory" << endl;
 	}
 	else {
@@ -352,7 +361,7 @@ void Game::printInventory(){
 
 }
 
-void Game::printInventory(string searchItem){
+void Game::printInventory(string searchItem) {
 
 	bool found = false;
 	for(map<string,string>::iterator cnt = inventory.begin(); cnt != inventory.end(); cnt++){
@@ -368,7 +377,7 @@ void Game::printInventory(string searchItem){
 
 }
 
-void Game::dropInventory(string searchItem){
+void Game::dropInventory(string searchItem) {
 
 	Room * curPtRoom = rooms.find(currentRoom)->second;
 
@@ -381,4 +390,33 @@ void Game::dropInventory(string searchItem){
 		cout<<searchItem<<" is not in your inventory";
 	}
 	cout<<endl;
+}
+
+bool Game::checkTriggers(string input) {
+	bool rtn = false;
+	map<string, Trigger*> temp = rooms.find(currentRoom)->second->triggers;
+	for(map<string, Trigger*>::iterator cnt = temp.begin(); cnt != temp.end(); cnt++) {
+		if(cnt->second->command == input) {
+			rtn = checkConditions(cnt->second->conditions);
+			if(rtn == true) {
+				cout << cnt->second->print << endl;
+				return rtn;
+			} else {
+				return rtn;
+			}
+		}
+	}
+	return false;
+}
+
+bool Game::checkConditions(map<string, string> conditions) {
+	if (conditions["has"] == "no") {
+		if(inventory.count(conditions["object"]) == 0) {
+			return true;
+		} else {
+
+			return false;
+		}
+	}
+	return false;
 }
