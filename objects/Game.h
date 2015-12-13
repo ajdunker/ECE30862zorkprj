@@ -60,6 +60,8 @@ private:
 	void putItem(string, string);
 	bool checkTriggers(string);
 	bool checkConditions(map<string, string>);
+	void turnOn(string);
+	void updateGame(string, string);
 };
 
 #endif /* OBJECTS_Game_H_ */

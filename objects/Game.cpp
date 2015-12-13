@@ -160,27 +160,59 @@ void Game::doCommand(string input) {
 	} else if (results[0] == "put") {
 		putItem(results[1], results[3]);
 	} else if (results[0] == "turn") {
-		//turns on an item
+		turnOn(results[2]);
 	} else if (results[0] == "attack") {
 		//attacks creature with item
-	} else if (results[0] == "add") {
-		addWidget(results[1], results[3]);
-	} else if (results[0] == "delete") {
-		deleteWidget(results[1]);
-	} else if (results[0] == "Update") {
-		//deletes item from the game
-	} else if (results[0] == "Game" && results[1] == "Over") {
-		cout<<"Victory!!"<<endl;
-		exit(EXIT_SUCCESS);
 	} else {
 		cout << "Command not recognized." << endl;
 	}
 
 }
+void Game::turnOn(string selectedItem){
+	Item* itemPtr;
+	if (inventory.count(selectedItem) > 0){
+		cout<<"You have activated "<<selectedItem<<endl;
+		itemPtr = items.find(selectedItem)->second;
+		cout<<itemPtr->turnOn["print"]<<endl;
 
+		// construct a stream from the string
+		stringstream strstr(itemPtr->turnOn["action"]);
+
+		// use stream iterators to copy the stream to the vector as whitespace separated strings
+		istream_iterator<string> it(strstr);
+		istream_iterator<string> end;
+		vector<string> results(it, end);
+
+		if (results[0] == "Add"){
+			addWidget(results[1], results[3]);
+		}else if(results[0] == "Delete"){
+			deleteWidget(results[1]);
+		}else if (results[0] == "Update"){
+			updateGame(results[1], results[3]);
+		}else if (results[0] == "Game" && results[1] == "Over"){
+			cout<<"Victory!!"<<endl;
+			exit(EXIT_SUCCESS);
+		}else{
+			cout<<"Error behind the scenes"<<endl;
+		}
+
+	}
+	else{
+		cout<<"Unable to turn on "<<selectedItem<<", not in your inventory"<<endl;
+	}
+}
+
+void Game::updateGame(string objectChanged, string newStatus){
+
+	  Item* curPtItem;
+	  curPtItem = items.find(objectChanged)->second;
+	  curPtItem->status = newStatus;
+
+}
 void Game::addWidget(string itemName, string location){
 
 	Room * curPtRoom;
+	Container * curPtCon;
 	string itemType;
 	string locationType = "Room";
 
@@ -213,7 +245,9 @@ void Game::addWidget(string itemName, string location){
 
 	if (itemType == "item"){
 		if(locationType == "container"){
-			//to do
+			curPtCon = containers.find(location)->second;
+			curPtCon->items[itemName] = itemName;
+			cout<<itemName<<" has been added to "<<location<<endl;
 		}
 		else if(locationType == "room"){
 			curPtRoom = rooms.find(location)->second;
@@ -305,10 +339,8 @@ void Game::putItem(string itemName, string containerName) {
 	Room * curPtRoom = rooms.find(currentRoom)->second;
 	if (inventory.count(itemName) > 0){
 		if (curPtRoom->containers.count(containerName) > 0){
-			//Container * curContainer = containers.find(containerName)->second;
-			//it is a legal operation
-			//curContainer->items[itemName] = inventory[itemName];//need to verify this line
-			//cout<<curContainer->items<<endl;
+			Container * curContainer = containers.find(containerName)->second;
+			curContainer->items[itemName] = inventory[itemName];
 			inventory.erase(itemName);
 			cout<<itemName<<" has been put into "<<containerName<<endl;
 		} else{
@@ -380,7 +412,7 @@ void Game::printInventory() {
 				cout << "Your inventory contains " << cnt->second;
 				first = false;
 			} else {
-				cout << " ," << cnt->second;
+				cout << ", " << cnt->second;
 			}
 		}
 		cout << "." << endl;

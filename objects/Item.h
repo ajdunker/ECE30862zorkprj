@@ -29,11 +29,13 @@ public:
 	string description;
 	string writing;
 	string status;
+	string debug;
 	map<string, string> turnOn;
 	map<string, Trigger*> triggers;
 
 private:
 	void createItem(xml_node<> *);
+	void createTurnOn(xml_node<> * );
 };
 
 
