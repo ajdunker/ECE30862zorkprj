@@ -21,6 +21,7 @@
 #include "Item.h"
 #include "Trigger.h"
 #include "Container.h"
+#include "Creature.h"
 #include "../rapidxml-1.13/rapidxml.hpp"
 
 using namespace std;
@@ -33,6 +34,7 @@ public:
 	map<string, Item*> items;
 	map<string, string> inventory;
 	map<string, Container*> containers;
+	map<string, Creature*> creatures;
 
 	Game(string);
 	Game(Game&);
@@ -45,7 +47,7 @@ public:
 
 private:
 	bool loadXML(string filename);
-	void splitXML(xml_node<> *, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&);
+	void splitXML(xml_node<> *, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&);
 	void doCommand(string);
 	void moveRoom(string);
 	void takeItem(string);

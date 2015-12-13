@@ -50,14 +50,16 @@ bool Game::loadXML(string filename) {
 	queue<xml_node<> *> items_xml;
 	queue<xml_node<> *> triggers_xml;
 	queue<xml_node<> *> containers_xml;
+	queue<xml_node<> *> creatures_xml;
 	xml_node<> * node = root_node->first_node();
 
-	splitXML(node, rooms_xml, items_xml, containers_xml);
+	splitXML(node, rooms_xml, items_xml, containers_xml, creatures_xml);
 
 	//Add the rooms to the game
 	Item * newItem;
 	Room * newRoom;
 	Container * newContainer;
+	Creature * newCreature;
 
 	while ((items_xml.size()) != 0) {
 		newItem = new Item(items_xml.front());
@@ -76,10 +78,22 @@ bool Game::loadXML(string filename) {
 		rooms[newRoom->name] = newRoom;
 		rooms_xml.pop();
 	}
+
+	while ((creatures_xml.size()) != 0) {
+		newCreature = new Creature(creatures_xml.front());
+		creatures[newCreature->name] = newCreature;
+		creatures_xml.pop();
+	}
+
+	cout << rooms << endl;
+	cout << containers << endl;
+	cout << items << endl;
+	cout << creatures << endl;
+
 	return true;
 }
 
-void Game::splitXML(xml_node<> * node, queue<xml_node<> *>& rooms_xml, queue<xml_node<> *>& items_xml, queue<xml_node<> *>& containers_xml) {
+void Game::splitXML(xml_node<> * node, queue<xml_node<> *>& rooms_xml, queue<xml_node<> *>& items_xml, queue<xml_node<> *>& containers_xml, queue<xml_node<> *>& creatures_xml) {
 	while (node != NULL) {
 		if (string((node->name())) == string("room")) {
 			rooms_xml.push(node);
@@ -87,6 +101,8 @@ void Game::splitXML(xml_node<> * node, queue<xml_node<> *>& rooms_xml, queue<xml
 			items_xml.push(node);
 		} else if (string((node->name())) == string("container")){
 			containers_xml.push(node);
+		} else if (string((node->name())) == string("creature")){
+			creatures_xml.push(node);
 		}
 	node = node->next_sibling();
 	}
