@@ -32,6 +32,7 @@ public:
 	map<string, string> borders;
 	map<string, string> items;
 	map<string, string> containers;
+	map<string, string> creatures;
 	map<string, Trigger*> triggers;
 
 private:

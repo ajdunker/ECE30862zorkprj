@@ -452,12 +452,30 @@ void Game::dropInventory(string searchItem) {
 
 bool Game::checkTriggers(string input) {
 	bool rtn = false;
+
+	//CHECK ROOM TRIGGERS
 	map<string, Trigger*> temp = rooms.find(currentRoom)->second->triggers;
 	for(map<string, Trigger*>::iterator cnt = temp.begin(); cnt != temp.end(); cnt++) {
 		if(cnt->second->command == input) {
-			rtn = checkConditions(cnt->second->conditions);
+			rtn = checkConditions(cnt->second->conditions, cnt->second->type);
 			if(rtn == true) {
 				cout << cnt->second->print << endl;
+				if(cnt->second->type == "single") { cnt->second->type = "done"; }
+				return rtn;
+			} else {
+				return rtn;
+			}
+		}
+	}
+	//CHECK CREATURE TRIGGERS
+	map<string, string> creat = rooms.find(currentRoom)->second->creatures;
+	for(map<string,string>::iterator crt = creat.begin(); crt != creat.end(); crt++) {
+		temp = creatures[crt->first]->triggers;
+		for(map<string, Trigger*>::iterator cnt = temp.begin(); cnt != temp.end(); cnt++) {
+			rtn = checkConditions(cnt->second->conditions, cnt->second->type);
+			if(rtn == true) {
+				cout << cnt->second->print << endl;
+				if(cnt->second->type == "single") { cnt->second->type = "done"; }
 				return rtn;
 			} else {
 				return rtn;
@@ -467,12 +485,32 @@ bool Game::checkTriggers(string input) {
 	return false;
 }
 
-bool Game::checkConditions(map<string, string> conditions) {
-	if (conditions["has"] == "no") {
-		if(inventory.count(conditions["object"]) == 0) { return true; } else { return false; }
-	}
-	if (conditions["status"] == "locked") {
-		return true;
+bool Game::checkConditions(map<string, string> conditions, string trigType) {
+	if(trigType == "permanent" || trigType == "single") {
+		if (conditions["has"] == "no") {
+			if(inventory.count(conditions["object"]) == 0) {
+				if (conditions["type"] == "single") { conditions["type"] = "done"; }
+				return true;
+			} else {
+				return false;
+			}
+		}
+		if (!conditions["status"].empty() && !conditions["object"].empty()) {
+			if(items.count(conditions["object"]) > 0 ) {
+				if(items[conditions["object"]]->status == conditions["status"]) {
+					return true;
+				} else {
+					return false;
+				}
+			} else if (containers.count(conditions["object"]) > 0) {
+				if(containers[conditions["object"]]->status == conditions["status"]) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+		}
 	}
 	return false;
 }

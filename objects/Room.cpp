@@ -34,6 +34,8 @@ void Room::createRoom(xml_node<> * childNode) {
 			createBorder(childNode);
 		} else if (xmlName == "item") {
 			this->items[xmlValue] = xmlValue;
+		} else if (xmlName == "creature") {
+			this->creatures[xmlValue] = xmlValue;
 		} else if (xmlName == "container") {
 			this->containers[xmlValue] = xmlValue;
 		} else if (xmlName == "trigger"){

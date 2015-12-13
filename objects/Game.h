@@ -59,7 +59,7 @@ private:
 	void addWidget(string, string);
 	void putItem(string, string);
 	bool checkTriggers(string);
-	bool checkConditions(map<string, string>);
+	bool checkConditions(map<string, string>, string);
 	void turnOn(string);
 	void updateGame(string, string);
 };
