@@ -20,7 +20,6 @@ using namespace std;
 using namespace rapidxml;
 
 class Item {
-
 public:
 
 	Item(rapidxml::xml_node<> *);
@@ -30,6 +29,7 @@ public:
 	string description;
 	string writing;
 	string status;
+	map<string, string> turnOn;
 	map<string, Trigger*> triggers;
 
 private:

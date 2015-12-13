@@ -8,7 +8,7 @@
 #include "Container.h"
 
 Container::Container(xml_node<> * containerNode) {
-	createContainer(containerNode);
+	createContainer(containerNode->first_node());
 }
 
 Container::~Container() {
@@ -26,11 +26,13 @@ void Container::createContainer(xml_node<> * childNode){
 		xmlValue = childNode->value();
 
 		if (xmlName == "name") {
-			name = xmlValue;
+			this->name = xmlValue;
 		} else if (xmlName == "item") {
 			this->items[xmlValue] = xmlValue;
 		} else if (xmlName == "accept") {
-			accept = xmlValue;
+			this->accept = xmlValue;
+		} else if (xmlName == "status") {
+			this->status = xmlValue;
 		} else if (xmlName == "trigger"){
 			newTrigger = new Trigger(childNode);
 			triggers[newTrigger->name] = newTrigger;

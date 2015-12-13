@@ -45,14 +45,13 @@ public:
 
 private:
 	bool loadXML(string filename);
-	void splitXML(xml_node<> *, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&);
+	void splitXML(xml_node<> *, queue<xml_node<> *>&, queue<xml_node<> *>&, queue<xml_node<> *>&);
 	void doCommand(string);
 	void moveRoom(string);
 	void takeItem(string);
 	void printInventory();
 	void printInventory(string);
 	void dropInventory(string);
-	void addObject(string,string);
 	void openContainer(string);
 	void deleteWidget(string);
 	void addWidget(string, string);
