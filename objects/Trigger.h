@@ -22,11 +22,12 @@ using namespace rapidxml;
 class Trigger {
 public:
 
-	string type;
+	string type = "permanent";
 	string print;
 	string command;
 	string status;
 	string owner;
+	string action;
 	string name;//set equal to the object
 	map<string, string> conditions;
 	Trigger(xml_node<> *);

@@ -84,12 +84,6 @@ bool Game::loadXML(string filename) {
 		creatures[newCreature->name] = newCreature;
 		creatures_xml.pop();
 	}
-
-	cout << rooms << endl;
-	cout << containers << endl;
-	cout << items << endl;
-	cout << creatures << endl;
-
 	return true;
 }
 
@@ -133,22 +127,24 @@ void Game::startGame() {
 
 void Game::doCommand(string input) {
 
-	  // construct a stream from the string
-	  stringstream strstr(input);
+	// construct a stream from the string
+	stringstream strstr(input);
 
-	  // use stream iterators to copy the stream to the vector as whitespace separated strings
-	  istream_iterator<string> it(strstr);
-	  istream_iterator<string> end;
-	  vector<string> results(it, end);
-
+	// use stream iterators to copy the stream to the vector as whitespace separated strings
+	istream_iterator<string> it(strstr);
+	istream_iterator<string> end;
+	vector<string> results(it, end);
 
 	if (input == "n" || input == "e" || input == "s" || input == "w") {
 		moveRoom(input);
 	} else if (input == "quit") {
 		cout<<"quitting game"<<endl;
 		exit(EXIT_SUCCESS);
-	} else if (input == "i") {
-		printInventory();
+	} else if (results[0] == "take") {
+		takeItem(results[1]);
+	} else if (results[0] == "open" && results[1] == "exit") {
+		cout << "Game over!" << endl;
+		exit(EXIT_SUCCESS);
 	} else if (results[0] == "take") {
 		takeItem(results[1]);
 	} else if (results[0] == "open") {
@@ -162,7 +158,15 @@ void Game::doCommand(string input) {
 	} else if (results[0] == "turn") {
 		turnOn(results[2]);
 	} else if (results[0] == "attack") {
-		//attacks creature with item
+		if(results[3].empty()) {
+			cout << "No weapon given." << endl;
+			return;
+		}
+		if(results[1].empty()) {
+			cout << "No target given." << endl;
+			return;
+		}
+		attackCreature(results[1], results[3]);
 	} else {
 		cout << "Command not recognized." << endl;
 	}
@@ -185,32 +189,36 @@ void Game::turnOn(string selectedItem){
 
 		if (results[0] == "Add"){
 			addWidget(results[1], results[3]);
-		}else if(results[0] == "Delete"){
+		} else if(results[0] == "Delete"){
 			deleteWidget(results[1]);
-		}else if (results[0] == "Update"){
+		} else if (results[0] == "Update"){
 			updateGame(results[1], results[3]);
-		}else if (results[0] == "Game" && results[1] == "Over"){
+		} else if (results[0] == "Game" && results[1] == "Over"){
 			cout<<"Victory!!"<<endl;
 			exit(EXIT_SUCCESS);
-		}else{
+		} else{
 			cout<<"Error behind the scenes"<<endl;
 		}
-
-	}
-	else{
+	} else {
 		cout<<"Unable to turn on "<<selectedItem<<", not in your inventory"<<endl;
 	}
 }
 
 void Game::updateGame(string objectChanged, string newStatus){
-
-	  Item* curPtItem;
-	  curPtItem = items.find(objectChanged)->second;
-	  curPtItem->status = newStatus;
+	Item* curPtItem;
+	Container* curPtCont;
+	if(items.count(objectChanged) > 0) {
+		curPtItem = items.find(objectChanged)->second;
+		curPtItem->status = newStatus;
+	}
+	if(containers.count(objectChanged) > 0) {
+		curPtCont = containers.find(objectChanged)->second;
+		curPtCont->status = newStatus;
+	}
 
 }
-void Game::addWidget(string itemName, string location){
 
+void Game::addWidget(string itemName, string location){
 	Room * curPtRoom;
 	Container * curPtCon;
 	string itemType;
@@ -241,20 +249,16 @@ void Game::addWidget(string itemName, string location){
 			locationType = "room";
 		}
 	}
-
-
 	if (itemType == "item"){
 		if(locationType == "container"){
 			curPtCon = containers.find(location)->second;
 			curPtCon->items[itemName] = itemName;
-			cout<<itemName<<" has been added to "<<location<<endl;
-		}
-		else if(locationType == "room"){
+			//cout<<itemName<<" has been added to "<<location<<endl;
+		} else if(locationType == "room"){
 			curPtRoom = rooms.find(location)->second;
 			curPtRoom->items[itemName] = itemName;
-			cout<<itemName<<" has been added to "<<location<<endl;
-		}
-		else{
+			//cout<<itemName<<" has been added to "<<location<<endl;
+		} else {
 			cout<<"Error, location does not exist in XML"<<endl;
 		}
 	}
@@ -262,13 +266,11 @@ void Game::addWidget(string itemName, string location){
 		if (locationType == "room"){
 			curPtRoom = rooms.find(location)->second;
 			curPtRoom->containers[itemName] = itemName;
-			cout<<itemName<<" has been added to "<<location<<endl;
-		}
-		else{
+			//cout<<itemName<<" has been added to "<<location<<endl;
+		} else {
 			cout<<"Error, containers can only be added to rooms"<<endl;
 		}
-	}
-	else{
+	} else {
 		cout<<"Error, object does not exist"<<endl;
 	}
 
@@ -307,12 +309,23 @@ void Game::deleteWidget(string itemName){
 			}
 		}
 	}
+	if (found == false){
+		for(map<string,Creature*>::iterator cnt = creatures.begin(); cnt != creatures.end(); cnt++){
+			if (cnt->first == itemName){
+				for(map<string,Room*>::iterator cnt2 = rooms.begin(); cnt2 != rooms.end(); cnt2++){
+					curPtRoom = rooms.find(cnt2->first)->second;
+					curPtRoom->creatures.erase(itemName);
+				}
+				found = true;
+			}
+		}
+	}
 
 	if (found == true){
-		cout<<itemName<<" has been deleted"<<endl;
+		//cout<<itemName<<" has been deleted"<<endl;
 	}
 	else{
-		cout<<"Cannot delete requested item"<<endl;
+		//cout<<"Cannot delete requested item."<<endl;
 	}
 
 	return;
@@ -391,7 +404,6 @@ void Game::takeItem(string new_item) {
 			}
 		}
 	}
-
 	if (curPtRoom->items.count(new_item) > 0) {
 		inventory[new_item] = new_item;
 		curPtRoom->items.erase(new_item);
@@ -482,6 +494,22 @@ bool Game::checkTriggers(string input) {
 			}
 		}
 	}
+	//CHECK CONTAINER TRIGGERS
+	map<string, string> cont = rooms.find(currentRoom)->second->containers;
+	for(map<string,string>::iterator crt = cont.begin(); crt != cont.end(); crt++) {
+		temp = containers[crt->first]->triggers;
+		for(map<string, Trigger*>::iterator cnt = temp.begin(); cnt != temp.end(); cnt++) {
+			rtn = checkConditions(cnt->second->conditions, cnt->second->type);
+			if(rtn == true) {
+				cout << cnt->second->print << endl;
+				performAction(cnt->second->action);
+				if(cnt->second->type == "single") { cnt->second->type = "done"; }
+				return rtn;
+			} else {
+				return rtn;
+			}
+		}
+	}
 	return false;
 }
 
@@ -493,6 +521,10 @@ bool Game::checkConditions(map<string, string> conditions, string trigType) {
 				return true;
 			} else {
 				return false;
+			}
+		} else if (conditions["has"] == "yes") {
+			if(containers[conditions["owner"]]->items.count(conditions["object"]) > 0) {
+				return true;
 			}
 		}
 		if (!conditions["status"].empty() && !conditions["object"].empty()) {
@@ -509,8 +541,71 @@ bool Game::checkConditions(map<string, string> conditions, string trigType) {
 					return false;
 				}
 			}
-
 		}
 	}
 	return false;
+}
+
+void Game::attackCreature(string creature, string weapon) {
+	bool rtn = false;
+	Room * curPtRoom = rooms.find(currentRoom)->second;
+	if(inventory.count(weapon) == 0) {
+		cout << weapon << " is not in your inventory" << endl;
+		return;
+	}
+	if(curPtRoom->creatures.count(creature) > 0) {
+		if(creatures[creature]->vulnerability == weapon) {
+			if(creatures[creature]->conditions.empty()) {
+				cout << creatures[creature]->attack["print"] << endl;
+				for(int i = 0; i < creatures[creature]->actions; i++) {
+					string s;
+					stringstream out;
+					out << i;
+					s = out.str();
+					performAction(creatures[creature]->attack["action"+s]);
+				}
+			} else {
+				rtn = checkConditions(creatures[creature]->conditions, "permanent");
+				if(rtn == true) {
+					cout << creatures[creature]->attack["print"] << endl;
+					for(int i = 0; i < creatures[creature]->actions; i++) {
+						string s;
+						stringstream out;
+						out << i;
+						s = out.str();
+						performAction(creatures[creature]->attack["action"+s]);
+					}
+				} else {
+					cout << "Attack failed. Conditions not met." << endl;
+				}
+			}
+		} else {
+			cout << "Nothing happened" << endl;
+		}
+	} else {
+		cout << "No " << creature << " in this room." << endl;
+	}
+}
+
+void Game::performAction(string doAction) {
+	// construct a stream from the string
+	stringstream strstr(doAction);
+
+	// use stream iterators to copy the stream to the vector as whitespace separated strings
+	istream_iterator<string> it(strstr);
+	istream_iterator<string> end;
+	vector<string> results(it, end);
+
+	if (results[0] == "Add"){
+		addWidget(results[1], results[3]);
+	} else if(results[0] == "Delete"){
+		deleteWidget(results[1]);
+	} else if (results[0] == "Update"){
+		updateGame(results[1], results[3]);
+	} else if (results[0] == "Game" && results[1] == "Over"){
+		cout<<"Victory!!"<<endl;
+		exit(EXIT_SUCCESS);
+	} else{
+		cout<<"Error behind the scenes"<<endl;
+	}
 }

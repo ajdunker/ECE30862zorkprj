@@ -7,7 +7,6 @@ int main(void)
 
 	Game * game = new Game(filename);
 	if(game->gameReady) {
-		cout << "Game starting" << endl;
 		game->startGame();
 	}
 

@@ -33,7 +33,7 @@ void Creature::createCreature(xml_node<> * childNode) {
 			newTrigger = new Trigger(childNode);
 			triggers[newTrigger->name] = newTrigger;
 		} else if (xmlName == "attack") {
-			//createAttack(childNode->first_node());
+			createAttack(childNode->first_node());
 		}
 		childNode = childNode->next_sibling();
 	}
@@ -42,14 +42,21 @@ void Creature::createCreature(xml_node<> * childNode) {
 void Creature::createAttack(xml_node<> * childNode) {
 	string Name;
 	string Value;
-
+	string Acts;
 	while(childNode != NULL) {
 		Name = childNode->name();
 		Value = childNode->value();
-
 		if(Name == "print") { this->attack[Name] = Value; }
-		else if(Name == "action") { this->attack[Name] = Value; }
+		else if(Name == "action") {
+			string s;
+			stringstream out;
+			out << actions;
+			s = out.str();
+			this->attack[Name+s] = Value;
+			actions++;
+		}
 		else if(Name == "condition") { createcCondition(childNode->first_node()); }
+		childNode = childNode->next_sibling();
 	}
 }
 
@@ -57,15 +64,11 @@ void Creature::createcCondition(xml_node<> * childNode) {
 	//check if status or has condition
 	string Name;
 	string Value;
-
 	while (childNode != NULL) {
 		Name = childNode->name();
 		Value = childNode->value();
-
 		if(Name == "object") { this->conditions[Name] = Value; }
-		else if(Name == "action") { this->conditions[Name] = Value; }
-
+		else if (Name == "status") { this->conditions[Name] = Value; }
 		childNode = childNode->next_sibling();
 	}
-
 }

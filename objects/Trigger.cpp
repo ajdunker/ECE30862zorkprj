@@ -26,7 +26,10 @@ void Trigger::createTrigger(xml_node<> * childNode) {
 
 		if(Name == "type") { this->type = Value; }
 		else if (Name == "command") { this->command = Value; }
-		else if (Name == "print") { this->print = Value; }
+		else if (Name == "print") {
+			this->print = Value;
+			this->name = Value;
+		} else if (Name == "action") { this->action = Value; }
 		else if (Name == "condition") { createCondition(childNode); }
 
 		childNode = childNode->next_sibling();

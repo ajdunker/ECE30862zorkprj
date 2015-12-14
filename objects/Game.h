@@ -62,6 +62,8 @@ private:
 	bool checkConditions(map<string, string>, string);
 	void turnOn(string);
 	void updateGame(string, string);
+	void attackCreature(string, string);
+	void performAction(string);
 };
 
 #endif /* OBJECTS_Game_H_ */
