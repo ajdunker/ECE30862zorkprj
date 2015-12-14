@@ -160,17 +160,9 @@ void Game::doCommand(string input) {
 		dropInventory(results[1]);
 	} else if (results[0] == "put") {
 		putItem(results[1], results[3]);
-	} else if (results[0] == "turn") {
+	} else if (results[0] == "turn" && results.size() > 2) {
 		turnOn(results[2]);
-	} else if (results[0] == "attack") {
-		if(results[3].empty()) {
-			cout << "No weapon given." << endl;
-			return;
-		}
-		if(results[1].empty()) {
-			cout << "No target given." << endl;
-			return;
-		}
+	} else if (results[0] == "attack" && results.size() > 3) {
 		attackCreature(results[1], results[3]);
 	} else if (results[0] == "Add"){
 		addWidget(results[1], results[3]);
