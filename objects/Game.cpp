@@ -143,8 +143,13 @@ void Game::doCommand(string input) {
 	} else if (results[0] == "take") {
 		takeItem(results[1]);
 	} else if (results[0] == "open" && results[1] == "exit") {
-		cout << "Game over!" << endl;
-		exit(EXIT_SUCCESS);
+		Room * curPtRoom = rooms.find(currentRoom)->second;
+		if(curPtRoom->type == "exit") {
+			cout << "Game over!" << endl;
+			exit(EXIT_SUCCESS);
+		} else {
+			cout << "This room is not an exit." << endl;
+		}
 	} else if (results[0] == "take") {
 		takeItem(results[1]);
 	} else if (results[0] == "open") {
@@ -167,6 +172,15 @@ void Game::doCommand(string input) {
 			return;
 		}
 		attackCreature(results[1], results[3]);
+	} else if (results[0] == "Add"){
+		addWidget(results[1], results[3]);
+	} else if(results[0] == "Delete"){
+		deleteWidget(results[1]);
+	} else if (results[0] == "Update"){
+		updateGame(results[1], results[3]);
+	} else if (results[0] == "Game" && results[1] == "Over"){
+		cout<<"Victory!!"<<endl;
+		exit(EXIT_SUCCESS);
 	} else {
 		cout << "Command not recognized." << endl;
 	}
@@ -180,24 +194,8 @@ void Game::turnOn(string selectedItem){
 		cout<<itemPtr->turnOn["print"]<<endl;
 
 		// construct a stream from the string
-		stringstream strstr(itemPtr->turnOn["action"]);
-
-		// use stream iterators to copy the stream to the vector as whitespace separated strings
-		istream_iterator<string> it(strstr);
-		istream_iterator<string> end;
-		vector<string> results(it, end);
-
-		if (results[0] == "Add"){
-			addWidget(results[1], results[3]);
-		} else if(results[0] == "Delete"){
-			deleteWidget(results[1]);
-		} else if (results[0] == "Update"){
-			updateGame(results[1], results[3]);
-		} else if (results[0] == "Game" && results[1] == "Over"){
-			cout<<"Victory!!"<<endl;
-			exit(EXIT_SUCCESS);
-		} else{
-			cout<<"Error behind the scenes"<<endl;
+		if(!itemPtr->turnOn["action"].empty()){
+			doCommand(itemPtr->turnOn["action"]);
 		}
 	} else {
 		cout<<"Unable to turn on "<<selectedItem<<", not in your inventory"<<endl;
@@ -502,7 +500,7 @@ bool Game::checkTriggers(string input) {
 			rtn = checkConditions(cnt->second->conditions, cnt->second->type);
 			if(rtn == true) {
 				cout << cnt->second->print << endl;
-				performAction(cnt->second->action);
+				doCommand(cnt->second->action);
 				if(cnt->second->type == "single") { cnt->second->type = "done"; }
 				return rtn;
 			} else {
@@ -554,33 +552,35 @@ void Game::attackCreature(string creature, string weapon) {
 		return;
 	}
 	if(curPtRoom->creatures.count(creature) > 0) {
-		if(creatures[creature]->vulnerability == weapon) {
-			if(creatures[creature]->conditions.empty()) {
-				cout << creatures[creature]->attack["print"] << endl;
-				for(int i = 0; i < creatures[creature]->actions; i++) {
-					string s;
-					stringstream out;
-					out << i;
-					s = out.str();
-					performAction(creatures[creature]->attack["action"+s]);
-				}
-			} else {
-				rtn = checkConditions(creatures[creature]->conditions, "permanent");
-				if(rtn == true) {
+		for(map<string, string>::iterator cnt = creatures[creature]->vulns.begin(); cnt != creatures[creature]->vulns.end(); cnt++) {
+			if(cnt->second == weapon) {
+				if(creatures[creature]->conditions.empty()) {
 					cout << creatures[creature]->attack["print"] << endl;
 					for(int i = 0; i < creatures[creature]->actions; i++) {
 						string s;
 						stringstream out;
 						out << i;
 						s = out.str();
-						performAction(creatures[creature]->attack["action"+s]);
+						doCommand(creatures[creature]->attack["action"+s]);
 					}
 				} else {
-					cout << "Attack failed. Conditions not met." << endl;
+					rtn = checkConditions(creatures[creature]->conditions, "permanent");
+					if(rtn == true) {
+						cout << creatures[creature]->attack["print"] << endl;
+						for(int i = 0; i < creatures[creature]->actions; i++) {
+							string s;
+							stringstream out;
+							out << i;
+							s = out.str();
+							doCommand(creatures[creature]->attack["action"+s]);
+						}
+					} else {
+						cout << "Attack failed. Conditions not met." << endl;
+					}
 				}
+			} else {
+				cout << "Nothing happened" << endl;
 			}
-		} else {
-			cout << "Nothing happened" << endl;
 		}
 	} else {
 		cout << "No " << creature << " in this room." << endl;

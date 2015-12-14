@@ -25,7 +25,7 @@ using namespace rapidxml;
 class Creature {
 public:
 	string name;
-	string vulnerability;
+	map<string, string> vulns;
 	int actions = 0;
 	map<string, string> attack;
 	map<string, string> conditions;

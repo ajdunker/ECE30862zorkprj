@@ -28,7 +28,7 @@ void Creature::createCreature(xml_node<> * childNode) {
 		if (xmlName == "name") {
 			this->name = xmlValue;
 		} else if (xmlName == "vulnerability") {
-			this->vulnerability = xmlValue;
+			this->vulns[xmlValue] = xmlValue;
 		} else if (xmlName == "trigger") {
 			newTrigger = new Trigger(childNode);
 			triggers[newTrigger->name] = newTrigger;
