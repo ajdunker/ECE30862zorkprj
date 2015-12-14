@@ -546,6 +546,7 @@ bool Game::checkConditions(map<string, string> conditions, string trigType) {
 
 void Game::attackCreature(string creature, string weapon) {
 	bool rtn = false;
+	bool atk = false;
 	Room * curPtRoom = rooms.find(currentRoom)->second;
 	if(inventory.count(weapon) == 0) {
 		cout << weapon << " is not in your inventory" << endl;
@@ -561,6 +562,7 @@ void Game::attackCreature(string creature, string weapon) {
 						stringstream out;
 						out << i;
 						s = out.str();
+						atk = true;
 						doCommand(creatures[creature]->attack["action"+s]);
 					}
 				} else {
@@ -572,15 +574,17 @@ void Game::attackCreature(string creature, string weapon) {
 							stringstream out;
 							out << i;
 							s = out.str();
+							atk = true;
 							doCommand(creatures[creature]->attack["action"+s]);
 						}
 					} else {
 						cout << "Attack failed. Conditions not met." << endl;
 					}
 				}
-			} else {
-				cout << "Nothing happened" << endl;
 			}
+		}
+		if(atk != true) {
+			cout << "Nothing happened." << endl;
 		}
 	} else {
 		cout << "No " << creature << " in this room." << endl;
