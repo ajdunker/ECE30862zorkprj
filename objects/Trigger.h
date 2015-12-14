@@ -22,7 +22,7 @@ using namespace rapidxml;
 class Trigger {
 public:
 
-	string type = "permanent";
+	string trigger_type;
 	string print;
 	string command;
 	string status;

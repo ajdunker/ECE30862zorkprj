@@ -8,7 +8,10 @@
 #include "Game.h"
 
 Game::Game(string filename) {
-	//Game& game = *this;
+	Game& game = *this;
+	this->currentRoom = "";
+	this->input = "";
+	this->gameReady = false;
 	try {
 		gameReady = loadXML(filename);
 	} catch (int error) {
@@ -144,7 +147,7 @@ void Game::doCommand(string input) {
 		exit(EXIT_SUCCESS);
 	} else if (results[0] == "open" && results[1] == "exit") {
 		Room * curPtRoom = rooms.find(currentRoom)->second;
-		if(curPtRoom->type == "exit") {
+		if(curPtRoom->room_type == "exit") {
 			cout << "Game over!" << endl;
 			exit(EXIT_SUCCESS);
 		} else {
@@ -475,10 +478,10 @@ bool Game::checkTriggers(string input) {
 	map<string, Trigger*> temp = rooms.find(currentRoom)->second->triggers;
 	for(map<string, Trigger*>::iterator cnt = temp.begin(); cnt != temp.end(); cnt++) {
 		if(cnt->second->command == input) {
-			rtn = checkConditions(cnt->second->conditions, cnt->second->type);
+			rtn = checkConditions(cnt->second->conditions, cnt->second->trigger_type);
 			if(rtn == true) {
 				cout << cnt->second->print << endl;
-				if(cnt->second->type == "single") { cnt->second->type = "done"; }
+				if(cnt->second->trigger_type == "single") { cnt->second->trigger_type = "done"; }
 				return rtn;
 			} else {
 				return rtn;
@@ -490,10 +493,10 @@ bool Game::checkTriggers(string input) {
 	for(map<string,string>::iterator crt = creat.begin(); crt != creat.end(); crt++) {
 		temp = creatures[crt->first]->triggers;
 		for(map<string, Trigger*>::iterator cnt = temp.begin(); cnt != temp.end(); cnt++) {
-			rtn = checkConditions(cnt->second->conditions, cnt->second->type);
+			rtn = checkConditions(cnt->second->conditions, cnt->second->trigger_type);
 			if(rtn == true) {
 				cout << cnt->second->print << endl;
-				if(cnt->second->type == "single") { cnt->second->type = "done"; }
+				if(cnt->second->trigger_type == "single") { cnt->second->trigger_type = "done"; }
 				return rtn;
 			} else {
 				return rtn;
@@ -505,11 +508,11 @@ bool Game::checkTriggers(string input) {
 	for(map<string,string>::iterator crt = cont.begin(); crt != cont.end(); crt++) {
 		temp = containers[crt->first]->triggers;
 		for(map<string, Trigger*>::iterator cnt = temp.begin(); cnt != temp.end(); cnt++) {
-			rtn = checkConditions(cnt->second->conditions, cnt->second->type);
+			rtn = checkConditions(cnt->second->conditions, cnt->second->trigger_type);
 			if(rtn == true) {
 				cout << cnt->second->print << endl;
 				doCommand(cnt->second->action);
-				if(cnt->second->type == "single") { cnt->second->type = "done"; }
+				if(cnt->second->trigger_type == "single") { cnt->second->trigger_type = "done"; }
 				return rtn;
 			} else {
 				return rtn;

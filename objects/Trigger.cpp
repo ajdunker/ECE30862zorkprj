@@ -20,11 +20,13 @@ void Trigger::createTrigger(xml_node<> * childNode) {
 	string Name;
 	string Value;
 
+	this->trigger_type = "permanent";
+
 	while(childNode != NULL) {
 		Name = childNode->name();
 		Value = childNode->value();
 
-		if(Name == "type") { this->type = Value; }
+		if(Name == "type") { this->trigger_type = Value; }
 		else if (Name == "command") { this->command = Value; }
 		else if (Name == "print") {
 			this->print = Value;

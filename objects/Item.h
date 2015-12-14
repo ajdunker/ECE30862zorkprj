@@ -13,7 +13,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
-#include "trigger.h"
+#include "Trigger.h"
 #include "../rapidxml-1.13/rapidxml.hpp"
 
 using namespace std;

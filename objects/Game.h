@@ -41,9 +41,9 @@ public:
 	virtual ~Game();
 	void startGame();
 
-	string currentRoom = "";
-	string input = "";
-	bool gameReady = false;
+	string currentRoom;
+	string input;
+	bool gameReady;
 
 private:
 	bool loadXML(string filename);

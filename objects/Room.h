@@ -10,7 +10,7 @@
 
 #include <string>
 #include <stdio.h>
-#include "trigger.h"
+#include "Trigger.h"
 #include <iostream>
 #include <map>
 #include <vector>
@@ -27,7 +27,7 @@ public:
 	virtual ~Room();
 
 	string name;
-	string type = "regular";
+	string room_type;
 	string description;
 	map<string, string> borders;
 	map<string, string> items;

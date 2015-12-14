@@ -19,7 +19,8 @@ Creature::~Creature() {
 void Creature::createCreature(xml_node<> * childNode) {
 	string xmlName;
 	string xmlValue;
-	Trigger* newTrigger;
+	Trigger * newTrigger;
+	this->actions = 0;
 
 	while (childNode != NULL) {
 		xmlName = childNode->name();

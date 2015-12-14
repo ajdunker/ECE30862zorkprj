@@ -15,7 +15,7 @@
 #include <map>
 #include <vector>
 #include <cstring>
-#include "trigger.h"
+#include "Trigger.h"
 #include "../rapidxml-1.13/rapidxml.hpp"
 
 using namespace std;
@@ -26,7 +26,7 @@ class Creature {
 public:
 	string name;
 	map<string, string> vulns;
-	int actions = 0;
+	int actions;
 	map<string, string> attack;
 	map<string, string> conditions;
 	map<string, Trigger*> triggers;

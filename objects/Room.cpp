@@ -20,6 +20,8 @@ void Room::createRoom(xml_node<> * childNode) {
 	string xmlValue;
 	Trigger* newTrigger;
 
+	this->room_type = "regular";
+
 	while (childNode != NULL) {
 		xmlName = childNode->name();
 		xmlValue = childNode->value();
@@ -29,7 +31,7 @@ void Room::createRoom(xml_node<> * childNode) {
 		} else if (xmlName == "description") {
 			this->description = xmlValue;
 		} else if (xmlName == "type") {
-			this->type = xmlValue;
+			this->room_type = xmlValue;
 		} else if (xmlName == "border") {
 			createBorder(childNode);
 		} else if (xmlName == "item") {
