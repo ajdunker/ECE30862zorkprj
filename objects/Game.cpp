@@ -239,6 +239,15 @@ void Game::addWidget(string itemName, string location){
 		}
 	}
 
+	for(map<string,Creature*>::iterator cnt = creatures.begin(); cnt != creatures.end(); cnt++){
+		if (cnt->first == itemName){
+			itemType = "creature";
+		}
+		if (cnt->first == location){
+			locationType = "creature";
+		}
+	}
+
 	for(map<string,Room*>::iterator cnt = rooms.begin(); cnt != rooms.end(); cnt++){
 		if (cnt->first == itemName){
 			itemType = "room";
@@ -259,8 +268,7 @@ void Game::addWidget(string itemName, string location){
 		} else {
 			cout<<"Error, location does not exist in XML"<<endl;
 		}
-	}
-	else if (itemType == "container"){
+	}else if (itemType == "container"){
 		if (locationType == "room"){
 			curPtRoom = rooms.find(location)->second;
 			curPtRoom->containers[itemName] = itemName;
@@ -268,8 +276,16 @@ void Game::addWidget(string itemName, string location){
 		} else {
 			cout<<"Error, containers can only be added to rooms"<<endl;
 		}
-	} else {
-		cout<<"Error, object does not exist"<<endl;
+	} else if (itemType == "creature") {
+		if (locationType == "room"){
+			curPtRoom = rooms.find(location)->second;
+			curPtRoom->creatures[itemName] = itemName;
+			//cout<<itemName<<" has been added to "<<location<<endl;
+		} else{
+			cout<<"Error, creatures can only be added to rooms"<<endl;
+		}
+	} else{
+		cout<<"Error, object not recognized"<<endl;
 	}
 
 }
