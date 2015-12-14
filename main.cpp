@@ -2,8 +2,8 @@
 
 int main(void)
 {
-	cout << "Using sample.xml" << endl;
-	string filename = "samples/sample.xml";
+	cout << "Using containerssample.xml" << endl;
+	string filename = "samples/creaturesample.xml";
 
 	Game * game = new Game(filename);
 	if(game->gameReady) {

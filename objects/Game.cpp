@@ -137,11 +137,11 @@ void Game::doCommand(string input) {
 
 	if (input == "n" || input == "e" || input == "s" || input == "w") {
 		moveRoom(input);
+	} else if (input == "i") {
+		printInventory();
 	} else if (input == "quit") {
 		cout<<"quitting game"<<endl;
 		exit(EXIT_SUCCESS);
-	} else if (results[0] == "take") {
-		takeItem(results[1]);
 	} else if (results[0] == "open" && results[1] == "exit") {
 		Room * curPtRoom = rooms.find(currentRoom)->second;
 		if(curPtRoom->type == "exit") {
